@@ -5,7 +5,7 @@
     src: vpn.auth
     dest: '{{ dir.docker }}/ovpn/'
 
-- name: qbit dir exists | file
+- name: Ensure qbit dir exists | file
   file: path={{ dir.docker }}/qbittorrent state=directory
 
 - name: cp qBit config | template

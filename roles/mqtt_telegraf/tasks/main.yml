@@ -1,0 +1,42 @@
+---
+
+- name: Ensure mqtt dir exists | file
+  file: path={{ dir.docker }}/mqtt state=directory
+
+- name: Ensure telegraf dir exists | file
+  file: path={{ dir.docker }}/telegraf state=directory
+
+- name: cp telegraf.conf | template
+  template:
+    src: telegraf.conf
+    dest: '{{ dir.docker }}/telegraf/'
+
+- name: MQTT & Telegraf
+
+  docker_compose:
+    project_name: nansi_mqtt_telegraf
+    pull: yes
+
+    definition:
+      version: '3.3'
+
+      services:
+        mqtt:
+          image: eclipse-mosquitto:latest
+          container_name: nansi_mqtt
+          ports:
+            - 1883:1883
+          restart: unless-stopped
+          volumes:
+            - '{{ dir.docker }}/mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf'
+
+        telegraf:
+          image: telegraf:latest
+          container_name: nansi_telegraf
+          ports:
+            - 8092:8092
+            - 8094:8094
+            - 8125:8125
+          restart: unless-stopped
+          volumes:
+            - '{{ dir.docker }}/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf'
