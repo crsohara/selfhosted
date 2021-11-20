@@ -1,0 +1,41 @@
+- name: InfluxDB & Grafana
+
+  docker_compose:
+    project_name: nansi_influx_grafana
+    pull: yes
+
+    definition:
+      version: '3.4'
+
+      services:
+        grafana:
+          image: grafana/grafana:latest
+          container_name: nansi_grafana
+          volumes:
+            - grafana-vol/:/var/lib/grafana
+          environment:
+            - GF_AUTH_ANONYMOUS_ENABLED=true
+            - GF_SECURITY_ALLOW_EMBEDDING=true
+            - GF_ANALYTICS_REPORTING_ENABLED=false
+            - GF_ANALYTICS_CHECK_FOR_UPDATES=false
+
+          ports:
+            - '3000:3000'
+          restart: unless-stopped
+
+        influx:
+          image: influxdb:latest
+          container_name: nansi_influx
+          volumes:
+            - influx-vol/:/var/lib/influxdb
+            - influx-backup/:/backups
+          environment:
+            - INFLUXDB_DB=home
+            - INFLUXDB_ADMIN_USER={{ influx.admin.user }}
+            - INFLUXDB_ADMIN_PASSWORD={{ influx.admin.pass }}
+            - INFLUXDB_USER={{ influx.user.user }}
+            - INFLUXDB_USER_PASSWORD={{ influx.user.pass }}
+            - INFLUXDB_MONITOR_STORE_ENABLED=FALSE
+          ports:
+            - '8086:8086'
+          restart: unless-stopped

@@ -6,3 +6,4 @@
     - wireguard
     - audioserve
     - ytdl
+    - influx_grafana
