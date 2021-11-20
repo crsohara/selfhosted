@@ -2,10 +2,10 @@
 all:
   hosts:
     pi4:
-      ansible_host: {{ host.pi4 }}
-      ansible_port: {{ host.default_port }}
-      ansible_ssh_private_key_file: {{ private_key_file }}
+      ansible_host: '{{ host.pi4.ip }}'
+      ansible_port: '{{ host.default_port }}'
+      ansible_ssh_private_key_file: '{{ private_key_file }}'
     pi3:
-      ansible_host: {{ host.pi3 }}
-      ansible_port: {{ host.default_port }}
-      ansible_ssh_private_key_file: {{ private_key_file }}
+      ansible_host: '{{ host.pi3.ip }}'
+      ansible_port: '{{ host.default_port }}'
+      ansible_ssh_private_key_file: '{{ private_key_file }}'
