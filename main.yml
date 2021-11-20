@@ -1,0 +1,5 @@
+- hosts: all
+  vars_files: variables/all.yml
+  roles:
+    - traefik_authelia
+    - ovpn_qbit
