@@ -1,0 +1,8 @@
+{{ host.media.ip }} ku.ma
+{{ host.media.ip }} qbit.ku.ma
+{{ host.media.ip }} sonarr.ku.ma
+{{ host.media.ip }} radarr.ku.ma
+{{ host.media.pi4 }} recipe.{{ tld.home }}
+{{ host.media.pi4 }} authelia.{{ tld.home }}
+{{ host.media.pi4 }} dashboard.{{ tld.home }}
+{{ host.media.pi4 }} trilium.{{ tld.home }}

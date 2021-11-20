@@ -1,4 +1,7 @@
 ---
+- name: Ensure pihole dir exists | file
+  file: path={{ dir.docker }}/homer state=directory
+
 - name: Homer
 
   docker_compose:
