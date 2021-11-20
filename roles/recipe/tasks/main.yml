@@ -1,0 +1,73 @@
+---
+- name: Tandoor recipes
+
+  docker_compose:
+    project_name: nansi_recipe
+    pull: yes
+
+    definition:
+      version: '3.3'
+
+      volumes:
+        recipe-datastore:
+          driver: local
+        recipe-static:
+          driver: local
+        recipe:
+          driver: local
+
+      services:
+        recipe-datastore:
+          image: postgres:13-alpine
+          container_name: recipe-datastore
+          restart: always
+          environment:
+            - POSTGRES_DB={{ postgres.recipe.db }}
+            - POSTGRES_USER={{ postgres.recipe.user }}
+            - POSTGRES_PASSWORD={{ postgres.recipe.password }}
+
+          networks:
+            - recipe
+          volumes:
+            - recipe-datastore:/var/lib/postgresql/data
+
+        recipe-web:
+          image: vabene1111/recipes
+          container_name: recipe
+          restart: always
+
+          environment:
+            - DB_ENGINE=django.db.backends.postgresql
+            - DEBUG=0
+            - POSTGRES_HOST=recipe-datastore
+            - POSTGRES_DB={{ postgres.recipe.db }}
+            - POSTGRES_USER={{ postgres.recipe.user }}
+            - POSTGRES_PASSWORD={{ postgres.recipe.password }}
+            - TIMEZONE={{ tz }}
+            - SECRET_KEY={{ recipe.secret }}
+
+          depends_on:
+            - recipe-datastore
+
+          labels:
+            - traefik.enable=true
+            - traefik.http.routers.recipe.tls.certresolver=tmp
+            - traefik.http.routers.recipe.rule=Host(`recipe.{{ tld.home }}`)
+            - traefik.http.routers.recipe.middlewares=authelia@docker
+            - traefik.http.routers.recipe.service=recipe
+            - traefik.http.services.recipe.loadbalancer.server.port=8080
+
+          networks:
+            - default
+            - recipe
+
+          volumes:
+            - recipe-static:/opt/recipes/staticfiles
+            - recipe:/opt/recipes/mediafiles
+
+      networks:
+        default:
+          name: traefik
+
+        recipe:
+          internal: true
