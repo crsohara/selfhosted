@@ -4,3 +4,4 @@
     - traefik_authelia
     - ovpn_qbit
     - wireguard
+    - audioserve

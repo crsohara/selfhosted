@@ -1,0 +1,26 @@
+- name: Audioserve
+
+  docker_compose:
+    project_name: nansi_audioserve
+    pull: yes
+
+    definition:
+      version: '3.4'
+
+      services:
+        audioserve:
+          image: cottoneyedbro/audioserve:latest
+          container_name: nansi_audioserve
+          volumes:
+            - '{{ dir.storage }}/music:/music'
+            - '{{ dir.storage }}/audiobooks:/audiobooks'
+          environment:
+            PORT: 3000
+            AUDIOSERVE_SHARED_SECRET: '{{ audioserve.secret }}'
+          ports:
+            - 4444:3000
+          restart: unless-stopped
+          command:
+            - '/audiobooks'
+            - '/music'
+            - '--t-cache-disable'
