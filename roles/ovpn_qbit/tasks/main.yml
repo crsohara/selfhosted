@@ -1,9 +1,10 @@
 ---
 
-# - name: cp ovpn conf | template
-#   template:
-#     src:
-#     dest:
+- name: cp ovpn auth | template
+  template:
+    src: vpn.auth
+    dest: '{{ dir.docker }}/ovpn/'
+
 - name: qbit dir exists | file
   file: path={{ dir.docker }}/qbittorrent state=directory
 
@@ -28,7 +29,7 @@
       services:
         vpn:
           image: derkades/ovpn-client:latest
-          container_name: vpn
+          container_name: nansi_vpn
           ports:
             - 8080:8080
             - 6881:6881
@@ -44,11 +45,11 @@
           devices:
             - /dev/net/tun:/dev/net/tun
           environment:
-            LOCAL_NETWORK: "{{ cidr.lan }}"
+            LOCAL_NETWORK: '{{ cidr.lan }}'
 
         qbit:
           image: linuxserver/qbittorrent:latest
-          container_name: qbit_o
+          container_name: nansi_qbit
           environment:
             - PGID=1000
             - PUID=1000
@@ -59,5 +60,4 @@
           volumes:
             - '{{ dir.storage }}/downloads:/downloads'
             - '{{ dir.storage }}:/storage'
-            # - qbit_config:/config
             - '{{ dir.docker }}/qbittorrent/qBittorrent.conf:/config/qBittorrent.conf'
