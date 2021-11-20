@@ -1,0 +1,21 @@
+---
+- name: Ensure trilium dir exists | file
+  file: path={{ dir.docker }}/trilium state=directory
+
+- name: Trilium
+  docker_compose:
+    project_name: nansi_trilium
+    pull: yes
+
+    trilium:
+      container_name: nansi_trilium
+      image: jmujmu/trilium:latest
+      restart: unless-stopped
+      ports:
+        - 22222:8080
+      environment:
+        - TRILIUM_START_NOTE_ID=root
+        - PUID=1000
+        - PGID=1000
+      volumes:
+        - ./trilium_data:/home/node/trilium-data

@@ -9,29 +9,31 @@
 
 - name: PiHole
   docker_compose:
-  pull: yes
-  definition:
-    version: '3'
+    project_name: nansi_pihole
+    pull: yes
 
-    services:
-      pihole:
-        container_name: pihole
-        image: pihole/pihole:latest
-        ports:
-          - '53:53/tcp'
-          - '53:53/udp'
-          - '67:67/udp'
-          - '8080:80/tcp'
-        # hostname: 'muma'
-        environment:
-          ServerIP: {{ host.pi3.ip }}
-          WEB_PORT: 80
-          TZ: {{ tz }}
-          CORS_HOSTS: {{ host.pi3.ip }}#81
-        volumes:
-          - '{{ dir.docker}}/pihole/custom.list:/etc/pihole/custom.list'
-          # - './etc-pihole/:/etc/pihole/'
-          ## - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
-        cap_add:
-          - NET_ADMIN
-        restart: unless-stopped
+    definition:
+      version: '3'
+
+      services:
+        pihole:
+          container_name: nansi_pihole
+          image: pihole/pihole:latest
+          ports:
+            - '53:53/tcp'
+            - '53:53/udp'
+            - '67:67/udp'
+            - '8080:80/tcp'
+          # hostname: 'muma'
+          environment:
+            ServerIP: {{ host.pi3.ip }}
+            WEB_PORT: 80
+            TZ: {{ tz }}
+            CORS_HOSTS: {{ host.pi3.ip }}#81
+          volumes:
+            - '{{ dir.docker}}/pihole/custom.list:/etc/pihole/custom.list'
+            # - './etc-pihole/:/etc/pihole/'
+            ## - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
+          cap_add:
+            - NET_ADMIN
+          restart: unless-stopped

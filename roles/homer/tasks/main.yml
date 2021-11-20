@@ -1,5 +1,5 @@
 ---
-- name: Ensure pihole dir exists | file
+- name: Ensure homer dir exists | file
   file: path={{ dir.docker }}/homer state=directory
 
 - name: Homer
