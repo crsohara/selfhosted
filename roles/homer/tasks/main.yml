@@ -1,0 +1,22 @@
+---
+- name: Homer
+
+  docker_compose:
+    project_name: nansi_homer
+    pull: yes
+
+    definition:
+      version: '3'
+
+      services:
+        homer:
+          image: b4bz/homer:latest
+          container_name: nansi_homer
+          volumes:
+            - '{{ dir.docker }}/homer:/www/assets'
+          ports:
+            - 81:8080
+          environment:
+            - UID=1000
+            - GID=1000
+          restart: unless-stopped

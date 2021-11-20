@@ -6,4 +6,5 @@
     - wireguard
     - audioserve
     - ytdl
-    - influx_grafana
+    # - influx_grafana
+    # - homer
