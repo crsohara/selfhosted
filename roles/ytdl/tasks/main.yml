@@ -1,0 +1,25 @@
+- name: ytdl
+
+  docker_compose:
+    project_name: nansi_ytdl
+    pull: yes
+
+    definition:
+      version: '3.4'
+
+      services:
+        ytdl:
+          image: tzahi12345/youtubedl-material:nightly
+          container_name: nansi_ytdl
+          ports:
+            - 8998:17442
+          environment:
+            - GUID=1000
+            - PGID=1000
+          command:
+            - 'pm2-runtime'
+            - 'pm2.config.js'
+          restart: unless-stopped
+          volumes:
+            - '{{ dir.storage }}/ytdl/audio:/app/audio'
+            - '{{ dir.storage }}/ytdl/video:/app/video'
