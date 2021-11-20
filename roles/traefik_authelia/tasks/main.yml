@@ -1,0 +1,103 @@
+---
+- name: Ensure {{ dir.docker }}/authelia dir exists
+  file: path={{ dir.docker }}/authelia state=directory
+
+- name: cp traefik.rules | template
+  template:
+    src: rules.toml
+    dest: '{{ dir.docker }}/authelia/rules.toml'
+
+- name: cp authelia.config | template
+  template:
+    src: configuration.yml
+    dest: '{{ dir.docker }}/authelia/configuration.yml'
+
+- name: cp authelia.users_db | template
+  template:
+    src: users_database.yml
+    dest: '{{ dir.docker }}/authelia/users_database.yml'
+
+- name: Create Traefik & Authelia SSO containers
+  docker_compose:
+    project_name: nansi_authelia
+    pull: yes
+
+    definition:
+      version: '3.3'
+
+      networks:
+        default:
+          external:
+            name: traefik
+
+      volumes:
+        certificate:
+          driver: local
+
+      services:
+        traefik:
+          image: traefik:latest
+          container_name: nansi_traefik
+          restart: always
+          command:
+            - '--log.level=ERROR'
+            #- '--log.level=INFO'
+            - '--api=true'
+            - '--api.insecure=true'
+            - '--pilot.token={{ traefik.pilot.token }}'
+            - '--providers.docker=true'
+            - '--providers.docker.network=traefik'
+            - '--providers.docker.exposedbydefault=false'
+            - "--providers.file=true"
+            - "--providers.file.filename=/etc/traefik/rules.toml"
+            - "--providers.file.watch=true"
+            - '--entrypoints.web.address=:80'
+            - '--entrypoints.websecure.address=:443'
+            - '--entrypoints.web.http.redirections.entryPoint.to=websecure'
+            - '--entrypoints.web.http.redirections.entryPoint.scheme=https'
+            - '--certificatesresolvers.tmp.acme.httpchallenge=true'
+            - '--certificatesresolvers.tmp.acme.httpchallenge.entrypoint=web'
+            - '--certificatesresolvers.tmp.acme.email=hello@{{ tld.base }}'
+            - '--certificatesresolvers.tmp.acme.storage=/certificate/acme.json'
+          labels:
+            - traefik.enable=true
+            - traefik.http.routers.traefik.rule=Host(`dashboard.{{ tld.home }}`)
+            - traefik.http.routers.traefik.service=api@internal
+            - traefik.http.routers.traefik.middlewares=authelia@docker
+            - traefik.http.routers.traefik.tls.certresolver=tmp
+            - traefik.http.services.api.loadbalancer.server.port=9999
+            - traefik.http.routers.api.middlewares=authelia@docker
+          ports:
+            - 80:80
+            - 443:443
+          networks:
+            - default
+          volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - certificate:/certificate
+            - '{{ dir.docker }}/tmp/rules.toml:/etc/traefik/rules.toml'
+          extra_hosts:
+            - host.docker.internal:172.17.0.1
+          depends_on:
+            - authelia
+
+        authelia:
+          image: authelia/authelia:latest
+          container_name: nansi_authelia
+          restart: always
+          # depends_on:
+          #   - traefik
+          networks:
+            - default
+          volumes:
+            - '{{ dir.home }}/docker/authelia1:/config'
+          labels:
+            - traefik.enable=true
+            - traefik.http.routers.authelia.rule=Host(`authelia.{{ tld.home }}`)
+            ## HTTP Routers
+            - traefik.http.routers.authelia.entrypoints=websecure
+            - traefik.http.routers.authelia.tls=true
+            - traefik.http.routers.authelia.tls.certresolver=tmp
+            - 'traefik.http.middlewares.authelia.forwardauth.address=http://authelia:9091/api/verify?rd=https://authelia.{{ tld.home }}'
+            - 'traefik.http.middlewares.authelia.forwardauth.trustForwardHeader=true'
+            - 'traefik.http.middlewares.authelia.forwardauth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email'

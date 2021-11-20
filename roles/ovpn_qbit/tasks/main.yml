@@ -1,0 +1,49 @@
+---
+- name: OpenVpn & qBittorrent
+
+  docker_compose:
+    project_name: nansi_openvpn_qbit
+    pull: yes
+
+    definition:
+      version: '3.4'
+
+      volumes:
+        qbit_config:
+          driver: local
+
+      services:
+        vpn:
+          image: derkades/ovpn-client:latest
+          container_name: vpn
+          ports:
+            - 8080:8080
+            - 6881:6881
+            - 6881:6881/udp
+          volumes:
+            - '{{ dir.home }}/docker/openvpn/node-ch-05.protonvpn.net.udp.ovpn:/client.ovpn'
+            - '{{ dir.home }}/docker/openvpn/vpn.auth:/vpn.auth'
+          dns:
+            - '1.1.1.1'
+            - '8.8.8.8'
+          cap_add:
+            - NET_ADMIN
+          devices:
+            - /dev/net/tun:/dev/net/tun
+          environment:
+            LOCAL_NETWORK: "{{ cidr.lan }}"
+
+        qbit:
+          image: linuxserver/qbittorrent:latest
+          container_name: qbit_o
+          environment:
+            - PGID=1000
+            - PUID=1000
+          depends_on:
+            - vpn
+          restart: unless-stopped
+          network_mode: service:vpn
+          volumes:
+            - '{{ dir.storage }}/downloads:/downloads'
+            - '{{ dir.storage }}:/storage'
+            - qbit_config:/config

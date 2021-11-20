@@ -1,0 +1,34 @@
+---
+- name: Wireguard
+
+  docker_compose:
+    project_name: nansi_wireguard
+    pull: yes
+
+    definition:
+      version: '3.3'
+
+      volumes:
+        wgconf.d:
+          driver: local
+
+      services:
+        wg:
+          image: linuxserver/wireguard:latest
+          container_name: wg
+          environment:
+            - SERVERURL={{ tld.home }}
+            - PUID=1000
+            - GUID=1000
+            - PEERS={{ wg.peers }}
+            - TZ={{ tz }}
+          ports:
+            - '{{ wg.port }}:51820/udp'
+          volumes:
+            - wgconf.d:/config
+          restart: unless-stopped
+          cap_add:
+            - NET_ADMIN
+            - SYS_MODULE
+          sysctls:
+            - net.ipv4.conf.all.src_valid_mark=1
