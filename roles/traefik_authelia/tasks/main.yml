@@ -5,17 +5,17 @@
 - name: cp traefik.rules | template
   template:
     src: rules.toml
-    dest: '{{ dir.docker }}/authelia/rules.toml'
+    dest: '{{ dir.docker }}/authelia/'
 
 - name: cp authelia.config | template
   template:
     src: configuration.yml
-    dest: '{{ dir.docker }}/authelia/configuration.yml'
+    dest: '{{ dir.docker }}/authelia/'
 
 - name: cp authelia.users_db | template
   template:
     src: users_database.yml
-    dest: '{{ dir.docker }}/authelia/users_database.yml'
+    dest: '{{ dir.docker }}/authelia/'
 
 - name: Create Traefik & Authelia SSO containers
   docker_compose:
@@ -75,7 +75,7 @@
           volumes:
             - /var/run/docker.sock:/var/run/docker.sock
             - certificate:/certificate
-            - '{{ dir.docker }}/tmp/rules.toml:/etc/traefik/rules.toml'
+            - '{{ dir.docker }}/authelia/rules.toml:/etc/traefik/rules.toml'
           extra_hosts:
             - host.docker.internal:172.17.0.1
           depends_on:
@@ -90,7 +90,7 @@
           networks:
             - default
           volumes:
-            - '{{ dir.home }}/docker/authelia1:/config'
+            - '{{ dir.docker }}/authelia:/config'
           labels:
             - traefik.enable=true
             - traefik.http.routers.authelia.rule=Host(`authelia.{{ tld.home }}`)

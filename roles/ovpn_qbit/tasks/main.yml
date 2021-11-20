@@ -1,4 +1,17 @@
 ---
+
+# - name: cp ovpn conf | template
+#   template:
+#     src:
+#     dest:
+- name: qbit dir exists | file
+  file: path={{ dir.docker }}/qbittorrent state=directory
+
+- name: cp qBit config | template
+  template:
+    src: qBittorrent.conf
+    dest: '{{ dir.docker }}/qbittorrent/'
+
 - name: OpenVpn & qBittorrent
 
   docker_compose:
@@ -21,8 +34,8 @@
             - 6881:6881
             - 6881:6881/udp
           volumes:
-            - '{{ dir.home }}/docker/openvpn/node-ch-05.protonvpn.net.udp.ovpn:/client.ovpn'
-            - '{{ dir.home }}/docker/openvpn/vpn.auth:/vpn.auth'
+            - '{{ dir.docker }}/openvpn/node-ch-05.protonvpn.net.udp.ovpn:/client.ovpn'
+            - '{{ dir.docker }}/openvpn/vpn.auth:/vpn.auth'
           dns:
             - '1.1.1.1'
             - '8.8.8.8'
@@ -46,4 +59,5 @@
           volumes:
             - '{{ dir.storage }}/downloads:/downloads'
             - '{{ dir.storage }}:/storage'
-            - qbit_config:/config
+            # - qbit_config:/config
+            - '{{ dir.docker }}/qbittorrent/qBittorrent.conf:/config/qBittorrent.conf'
