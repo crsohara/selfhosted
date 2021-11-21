@@ -1,4 +1,6 @@
-- hosts: all
+# - hosts: all
+
+- hosts: pi4
   vars_files: variables/all.yml
   roles:
     - traefik_authelia
@@ -6,8 +8,12 @@
     - wireguard
     - audioserve
     - ytdl
-    # - influx_grafana
-    # - homer
-    # - pihole
-    # - trilium
-    # - mqtt_telegraf
+
+- hosts: pi3
+  vars_files: variables/all.yml
+  - roles
+    - influx_grafana
+    - homer
+    - pihole
+    - trilium
+    - mqtt_telegraf
