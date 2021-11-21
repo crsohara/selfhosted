@@ -49,9 +49,6 @@
           volumes:
             - "{{ dir.docker }}/openvpn/node-ch-05.protonvpn.net.udp.ovpn:/client.ovpn"
             - "{{ dir.docker }}/openvpn/vpn.auth:/vpn.auth"
-          # dns:
-          #   - '1.1.1.1'
-          #   - '8.8.8.8'
           cap_add:
             - NET_ADMIN
             - SYS_MODULE
@@ -70,7 +67,6 @@
             - traefik.http.services.qbit.loadbalancer.server.port=8080
           networks:
             - traefik
-            # - other
 
         qbit:
           image: linuxserver/qbittorrent:latest
@@ -94,5 +90,3 @@
         traefik:
           external:
             name: traefik
-        # other:
-        #   internal: true
