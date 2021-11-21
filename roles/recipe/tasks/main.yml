@@ -32,7 +32,7 @@
             - recipe-datastore:/var/lib/postgresql/data
 
         recipe-web:
-          image: vabene1111/recipes
+          image: vabene1111/recipes:latest
           container_name: recipe
           restart: always
 

@@ -93,6 +93,7 @@
           networks:
             - traefik
           environment:
+            - TZ={{ tz }}
             - PGID=1000
             - PUID=1000
           volumes:
