@@ -1,19 +1,31 @@
 ---
 
+- name: Ensure ovpn dir exists | file
+  file:
+    path: "{{ dir.docker }}/ovpn"
+    state: directory
+
 - name: cp ovpn auth | template
   template:
     src: vpn.auth
-    dest: '{{ dir.docker }}/ovpn/'
+    dest: "{{ dir.docker }}/ovpn/"
 
 - name: Ensure qbit dir exists | file
-  file: path={{ dir.docker }}/qbittorrent state=directory
+  file:
+    path: "{{ dir.docker }}/qbittorrent"
+    state: directory
 
 - name: cp qBit config | template
   template:
     src: qBittorrent.conf
-    dest: '{{ dir.docker }}/qbittorrent/'
+    dest: "{{ dir.docker }}/qbittorrent/"
 
-- name: OpenVpn & qBittorrent
+- name: cp qBit slack script | file
+  copy:
+    src: slack-on-complete.sh
+    dest: "{{ dir.docker }}/qbittorrent/"
+
+- name: OpenVpn qBittorrent
 
   docker_compose:
     project_name: nansi_openvpn_qbit
@@ -35,17 +47,30 @@
             - 6881:6881
             - 6881:6881/udp
           volumes:
-            - '{{ dir.docker }}/openvpn/node-ch-05.protonvpn.net.udp.ovpn:/client.ovpn'
-            - '{{ dir.docker }}/openvpn/vpn.auth:/vpn.auth'
-          dns:
-            - '1.1.1.1'
-            - '8.8.8.8'
+            - "{{ dir.docker }}/openvpn/node-ch-05.protonvpn.net.udp.ovpn:/client.ovpn"
+            - "{{ dir.docker }}/openvpn/vpn.auth:/vpn.auth"
+          # dns:
+          #   - '1.1.1.1'
+          #   - '8.8.8.8'
           cap_add:
             - NET_ADMIN
+            - SYS_MODULE
+          sysctls:
+            - net.ipv4.conf.all.src_valid_mark=1
           devices:
             - /dev/net/tun:/dev/net/tun
           environment:
-            LOCAL_NETWORK: '{{ cidr.lan }}'
+            LOCAL_NETWORK: "{{ cidr.lan }}"
+          labels:
+            - traefik.enable=true
+            - traefik.http.routers.qbit.tls.certresolver=tmp
+            - traefik.http.routers.qbit.rule=Host(`qbit.{{ tld.home }}`)
+            - traefik.http.routers.qbit.middlewares=authelia@docker
+            - traefik.http.routers.qbit.service=qbit
+            - traefik.http.services.qbit.loadbalancer.server.port=8080
+          networks:
+            - traefik
+            # - other
 
         qbit:
           image: linuxserver/qbittorrent:latest
@@ -53,11 +78,21 @@
           environment:
             - PGID=1000
             - PUID=1000
+            - DOCKER_MODS=arafatamim/linuxserver-io-mod-vuetorrent
           depends_on:
             - vpn
           restart: unless-stopped
           network_mode: service:vpn
           volumes:
-            - '{{ dir.storage }}/downloads:/downloads'
-            - '{{ dir.storage }}:/storage'
-            - '{{ dir.docker }}/qbittorrent/qBittorrent.conf:/config/qBittorrent.conf'
+            - "{{ dir.storage }}/downloads:/downloads"
+            - "{{ dir.storage }}:/storage"
+            - "{{ dir.docker }}/qbittorrent/qBittorrent.conf:/config/qBittorrent/qBittorrent.conf"
+            - "{{ dir.docker }}/qbittorrent/slack-on-complete.sh:/slack-on-complete.sh"
+            - qbit_config:/config
+
+      networks:
+        traefik:
+          external:
+            name: traefik
+        # other:
+        #   internal: true
