@@ -7,8 +7,11 @@
   listen: reboot traefik
 
 - name: reboot authelia
-  community.docker.docker_container:
-    name: nansi_authelia
-    container_default_behavior: compatibility
-    restart: true
+  command: docker restart nansi_authelia
+  ###### breaks/removes volumes on container
+  # community.docker.docker_container:
+  #   name: nansi_authelia
+  #   container_default_behavior: compatibility
+  #   restart: true
+  ######
   listen: reboot authelia

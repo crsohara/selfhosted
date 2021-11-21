@@ -2,9 +2,11 @@
 #                   Authelia configuration                    #
 ###############################################################
 
-host: 0.0.0.0
-port: 9091
-log.level: debug
+server:
+  host: 0.0.0.0
+  port: 9091
+
+log.level: error
 
 jwt_secret: {{ authelia.jwt_secret }}
 
@@ -63,8 +65,8 @@ session:
 
 regulation:
   max_retries: 3
-  find_time: 2h
-  ban_time: 2h
+  find_time: 1h # can't be larger than ban_time
+  ban_time: 1h
 
 storage:
   local:
