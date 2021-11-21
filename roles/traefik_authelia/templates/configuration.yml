@@ -25,20 +25,40 @@ authentication_backend:
       salt_length: 16
 
 access_control:
-  default_policy: two_factor
+  default_policy: deny
   rules:
     - domain: "authelia.{{ tld.home }}"
       policy: bypass
+
+    - domain:
+      - "qbit.{{ tld.home }}"
+      - "dashboard.{{ tld.home }}"
+      - "trilium.{{ tld.home }}"
+      policy: two_factor
+      subject:
+      - ["group:admin", "group:super-admin"]
+
+    - domain: "recipe.{{ tld.home }}"
+      policy: two_factor
+      subject:
+      - ["group:user"]
+
     - domain: "*.{{ tld.home }}"
       policy: two_factor
+      subject:
+      - ["group:admin", "group:super-admin"]
+
     - domain: "{{ tld.home }}"
       policy: two_factor
+      subject:
+      - ["group:admin", "group:super-admin"]
 
 session:
   name: authelia_session
   secret: {{ authelia.session_secret }}
-  expiration: 3600 # 1 hour
-  inactivity: 300 # 5 minutes
+  expiration: 1h
+  inactivity: 5m
+  remember_me_duration: 1M
   domain: {{ tld.home }}
 
 regulation:

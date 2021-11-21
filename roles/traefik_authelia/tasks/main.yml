@@ -2,20 +2,26 @@
 - name: Ensure {{ dir.docker }}/authelia dir exists
   file: path={{ dir.docker }}/authelia state=directory
 
+- name: Ensure {{ dir.docker }}/traefik dir exists
+  file: path={{ dir.docker }}/traefik state=directory
+
 - name: cp traefik.rules | template
   template:
     src: rules.toml
-    dest: '{{ dir.docker }}/authelia/'
+    dest: '{{ dir.docker }}/traefik/'
+  notify: reboot traefik
 
 - name: cp authelia.config | template
   template:
     src: configuration.yml
     dest: '{{ dir.docker }}/authelia/'
+  notify: reboot authelia
 
 - name: cp authelia.users_db | template
   template:
     src: users_database.yml
     dest: '{{ dir.docker }}/authelia/'
+  notify: reboot authelia
 
 - name: Create Traefik & Authelia SSO containers
   docker_compose:
@@ -26,7 +32,7 @@
       version: '3.3'
 
       networks:
-        default:
+        traefik:
           external:
             name: traefik
 
@@ -41,7 +47,6 @@
           restart: always
           command:
             - '--log.level=ERROR'
-            #- '--log.level=INFO'
             - '--api=true'
             - '--api.insecure=true'
             - '--pilot.token={{ traefik.pilot.token }}'
@@ -71,11 +76,11 @@
             - 80:80
             - 443:443
           networks:
-            - default
+            - traefik
           volumes:
             - /var/run/docker.sock:/var/run/docker.sock
             - certificate:/certificate
-            - '{{ dir.docker }}/authelia/rules.toml:/etc/traefik/rules.toml'
+            - "{{ dir.docker }}/traefik/rules.toml:/etc/traefik/rules.toml"
           extra_hosts:
             - host.docker.internal:172.17.0.1
           depends_on:
@@ -85,16 +90,16 @@
           image: authelia/authelia:latest
           container_name: nansi_authelia
           restart: always
-          # depends_on:
-          #   - traefik
           networks:
-            - default
+            - traefik
+          environment:
+            - PGID=1000
+            - PUID=1000
           volumes:
-            - '{{ dir.docker }}/authelia:/config'
+            - "{{ dir.docker }}/authelia:/config"
           labels:
             - traefik.enable=true
             - traefik.http.routers.authelia.rule=Host(`authelia.{{ tld.home }}`)
-            ## HTTP Routers
             - traefik.http.routers.authelia.entrypoints=websecure
             - traefik.http.routers.authelia.tls=true
             - traefik.http.routers.authelia.tls.certresolver=tmp

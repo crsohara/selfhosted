@@ -1,0 +1,14 @@
+---
+- name: reboot traefik
+  community.docker.docker_container:
+    name: nansi_traefik
+    container_default_behavior: compatibility
+    restart: true
+  listen: reboot traefik
+
+- name: reboot authelia
+  community.docker.docker_container:
+    name: nansi_authelia
+    container_default_behavior: compatibility
+    restart: true
+  listen: reboot authelia
