@@ -42,10 +42,6 @@
         vpn:
           image: derkades/ovpn-client:latest
           container_name: nansi_vpn
-          ports:
-            - 8080:8080
-            - 6881:6881
-            - 6881:6881/udp
           volumes:
             - "{{ dir.docker }}/openvpn/node-ch-05.protonvpn.net.udp.ovpn:/client.ovpn"
             - "{{ dir.docker }}/openvpn/vpn.auth:/vpn.auth"
