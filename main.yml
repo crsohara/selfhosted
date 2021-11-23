@@ -3,17 +3,18 @@
 - hosts: pi4
   vars_files: variables/all.yml
   roles:
-    - traefik_authelia
-    - ovpn_qbit
-    - wireguard
-    - audioserve
-    - ytdl
-
-- hosts: pi3
-  vars_files: variables/all.yml
-  - roles
-    - influx_grafana
-    - homer
-    - pihole
-    - trilium
+    # - smtp
+    # - traefik_authelia
+    # - ovpn_qbit
+    # - wireguard
+    # - audioserve
+    # - metube
     - mqtt_telegraf
+
+# - hosts: pi3
+#   vars_files: variables/all.yml
+#   - roles
+#     - influx_grafana
+#     - homer
+#     - pihole
+#     - trilium
