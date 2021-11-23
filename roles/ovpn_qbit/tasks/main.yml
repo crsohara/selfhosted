@@ -57,7 +57,8 @@
           devices:
             - /dev/net/tun:/dev/net/tun
           environment:
-            LOCAL_NETWORK: "{{ cidr.lan }}"
+            - LOCAL_NETWORK={{ cidr.lan }}
+            - TX={{ tz }}
           labels:
             - traefik.enable=true
             - traefik.http.routers.qbit.tls.certresolver=tmp
@@ -75,6 +76,7 @@
             - PGID=1000
             - PUID=1000
             - DOCKER_MODS=arafatamim/linuxserver-io-mod-vuetorrent
+            - TX={{ tz }}
           depends_on:
             - vpn
           restart: unless-stopped
