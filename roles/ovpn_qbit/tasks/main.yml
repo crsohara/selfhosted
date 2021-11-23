@@ -52,6 +52,8 @@
             - net.ipv4.conf.all.src_valid_mark=1
           restart:
             - unless-stopped
+          ports:
+            - 8080:8080 # for lan access
           devices:
             - /dev/net/tun:/dev/net/tun
           environment:
