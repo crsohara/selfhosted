@@ -1,3 +1,4 @@
+---
 - name: Audioserve
 
   docker_compose:
@@ -6,6 +7,11 @@
 
     definition:
       version: '3.4'
+
+      networks:
+        traefik:
+          external:
+            name: traefik
 
       services:
         audioserve:
@@ -17,9 +23,16 @@
           environment:
             PORT: 3000
             AUDIOSERVE_SHARED_SECRET: '{{ audioserve.secret }}'
-          ports:
-            - 4444:3000
           restart: unless-stopped
+          networks:
+            - traefik
+          labels:
+            - traefik.enable=true
+            - traefik.http.routers.books.tls.certresolver=tmp
+            - traefik.http.routers.books.rule=Host(`books.{{ tld.home }}`)
+            - traefik.http.routers.books.middlewares=authelia@docker
+            - traefik.http.routers.books.service=books
+            - traefik.http.services.books.loadbalancer.server.port=3000
           command:
             - '/audiobooks'
             - '/music'
