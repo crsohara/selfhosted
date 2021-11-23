@@ -62,7 +62,7 @@
           labels:
             - traefik.enable=true
             - traefik.http.routers.qbit.tls.certresolver=tmp
-            - traefik.http.routers.qbit.rule=Host(`qbit.{{ tld.home }}`)
+            - 'traefik.http.routers.qbit.rule=Host(`qbit.{{ tld.home }}`) && && !Path(`/service-worker.js`)'
             - traefik.http.routers.qbit.middlewares=authelia@docker
             - traefik.http.routers.qbit.service=qbit
             - traefik.http.services.qbit.loadbalancer.server.port=8080
