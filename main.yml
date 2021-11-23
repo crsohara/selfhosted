@@ -9,7 +9,8 @@
     # - wireguard
     # - audioserve
     # - metube
-    - mqtt_telegraf
+    # - mqtt_telegraf
+    - recipe
 
 # - hosts: pi3
 #   vars_files: variables/all.yml

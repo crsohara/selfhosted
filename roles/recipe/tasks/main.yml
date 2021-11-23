@@ -19,12 +19,13 @@
       services:
         recipe-datastore:
           image: postgres:13-alpine
-          container_name: recipe-datastore
+          container_name: nansi_recipe-datastore
           restart: always
           environment:
             - POSTGRES_DB={{ postgres.recipe.db }}
             - POSTGRES_USER={{ postgres.recipe.user }}
             - POSTGRES_PASSWORD={{ postgres.recipe.password }}
+            - TIMEZONE={{ tz }}
 
           networks:
             - recipe
@@ -33,7 +34,7 @@
 
         recipe-web:
           image: vabene1111/recipes:latest
-          container_name: recipe
+          container_name: nansi_recipe
           restart: always
 
           environment:
