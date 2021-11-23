@@ -7,7 +7,7 @@
 
 - name: cp traefik.rules | template
   template:
-    src: rules.toml
+    src: rules.yml
     dest: '{{ dir.docker }}/traefik/'
   notify: reboot traefik
 
@@ -54,7 +54,7 @@
             - '--providers.docker.network=traefik'
             - '--providers.docker.exposedbydefault=false'
             - "--providers.file=true"
-            - "--providers.file.filename=/etc/traefik/rules.toml"
+            - "--providers.file.filename=/etc/traefik/rules.yml"
             - "--providers.file.watch=true"
             - '--entrypoints.web.address=:80'
             - '--entrypoints.websecure.address=:443'
@@ -80,7 +80,7 @@
           volumes:
             - /var/run/docker.sock:/var/run/docker.sock
             - certificate:/certificate
-            - "{{ dir.docker }}/traefik/rules.toml:/etc/traefik/rules.toml"
+            - "{{ dir.docker }}/traefik/rules.yml:/etc/traefik/rules.yml"
           extra_hosts:
             - host.docker.internal:172.17.0.1
           depends_on:

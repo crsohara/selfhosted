@@ -1,0 +1,15 @@
+http:
+  routers:
+    trilium:
+      rule: Host(`trilium.{{ tld.home }}`)
+      service: trilium
+      entrypoints: [websecure]
+      middlewares: [authelia@docker]
+
+      tls:
+        certResolver: tmp
+
+  services:
+    trilium:
+      loadbalancer:
+        url: http://{{ host.pi3.ip }}:22222
