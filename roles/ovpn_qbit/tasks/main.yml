@@ -54,6 +54,8 @@
             - SYS_MODULE
           sysctls:
             - net.ipv4.conf.all.src_valid_mark=1
+          restart:
+            - unless-stopped
           devices:
             - /dev/net/tun:/dev/net/tun
           environment:
