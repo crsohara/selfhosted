@@ -1,20 +1,22 @@
 ---
 
-- name: Ensure mqtt dir exists | file
+- name: Ensure mqtt dir exists
   file: path={{ dir.docker }}/mqtt state=directory
 
-- name: Ensure telegraf dir exists | file
+- name: Ensure telegraf dir exists
   file: path={{ dir.docker }}/telegraf state=directory
 
-- name: cp mosquitto.conf | copy
+- name: mosquitto.conf | file
   copy:
     src: mosquitto.conf
     dest: '{{ dir.docker }}/mqtt/'
+  notify: reboot mqtt
 
-- name: cp telegraf.conf | template
+- name: telegraf.conf | template
   template:
     src: telegraf.conf
     dest: '{{ dir.docker }}/telegraf/'
+  notify: reboot telegraf
 
 - name: MQTT & Telegraf
 
