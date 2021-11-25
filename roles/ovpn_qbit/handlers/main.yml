@@ -1,0 +1,8 @@
+---
+- name: reboot qbit
+  command: docker restart nansi_qbit
+  listen: reboot qbit
+
+- name: reboot ovpn
+  command: docker restart nansi_ovpn
+  listen: reboot ovpn

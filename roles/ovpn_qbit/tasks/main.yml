@@ -5,25 +5,28 @@
     path: "{{ dir.docker }}/ovpn"
     state: directory
 
-- name: cp ovpn auth | template
-  template:
-    src: vpn.auth
-    dest: "{{ dir.docker }}/ovpn/"
-
 - name: Ensure qbit dir exists | file
   file:
     path: "{{ dir.docker }}/qbittorrent"
     state: directory
 
-- name: cp qBit config | template
+- name: ovpn auth | template
+  template:
+    src: vpn.auth
+    dest: "{{ dir.docker }}/ovpn/"
+  notify: reboot ovpn
+
+- name: qBit config | template
   template:
     src: qBittorrent.conf
     dest: "{{ dir.docker }}/qbittorrent/"
+  notify: reboot qbit
 
-- name: cp qBit slack script | file
+- name: qBit slack script | file
   copy:
     src: slack-on-complete.sh
     dest: "{{ dir.docker }}/qbittorrent/"
+  notify: reboot qbit
 
 - name: OpenVpn qBittorrent
 
