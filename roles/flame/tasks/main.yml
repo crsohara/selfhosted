@@ -1,0 +1,48 @@
+---
+
+- name: Ensure flame dir exists | file
+  file:
+    path: "{{ dir.docker }}/flame"
+    state: directory
+  notify: reboot flame
+
+- name: Ensure flame/data dir exists | file
+  file:
+    path: "{{ dir.docker }}/flame/data"
+    state: directory
+  notify: reboot flame
+
+- name: Flame
+
+  docker_compose:
+    project_name: nansi_flame
+    pull: yes
+
+
+    definition:
+      version: '3.4'
+
+      networks:
+        traefik:
+          external:
+            name: traefik
+
+      services:
+        flame:
+          image: pawelmalak/flame:multiarch
+          container_name: nansi_flame
+          volumes:
+            - '{{ dir.docker }}/flame/data:/app/data'
+            - /var/run/docker.sock:/var/run/docker.sock
+          environment:
+            - PASSWORD={{ flame.password }}
+          restart: unless-stopped
+          labels:
+            - traefik.enable=true
+            - traefik.http.routers.flame.tls.certresolver=tmp
+            - traefik.http.routers.flame.rule=Host(`flame.{{ tld.home }}`)
+            - traefik.http.routers.flame.middlewares=authelia@docker
+            - traefik.http.routers.flame.service=flame
+            - traefik.http.services.flame.loadbalancer.server.port=5005
+          networks:
+            - traefik

@@ -10,7 +10,8 @@
     # - audioserve
     # - metube
     # - mqtt_telegraf
-    - recipe
+    # - recipe
+    - flame
 
 # - hosts: pi3
 #   vars_files: variables/all.yml

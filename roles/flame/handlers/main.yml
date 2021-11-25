@@ -1,0 +1,4 @@
+---
+- name: reboot flame
+  command: docker restart nansi_flame
+  listen: reboot flame
