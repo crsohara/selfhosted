@@ -1,0 +1,46 @@
+---
+- name: Check ufw is installed
+  command: dpkg-query -l ufw
+  register: deb_check
+
+- name: Allow all access to web tcp ports
+  become: yes
+  become_user: root
+  ufw:
+    rule: allow
+    port: '{{ item }}'
+    proto: tcp
+  loop:
+  - 80
+  - 443
+
+- name: Allow all access to tcp ports
+  become: yes
+  become_user: root
+  ufw:
+    rule: allow
+    port: '{{ wg.port }}'
+    proto: udp
+
+- name: Allow all access from lan services
+  become: yes
+  become_user: root
+  ufw:
+    rule: allow
+    proto: tcp
+    port: '{{ item }}'
+    src: '{{ cidr.lan }}'
+  loop:
+    - 21
+    - 22
+    - '{{ mqtt.port }}'
+    - '{{ portainer.port }}'
+
+- name: Allow mqtt port access from docker network
+  become: yes
+  become_user: root
+  ufw:
+    rule: allow
+    proto: tcp
+    port: '{{ mqtt.port }}'
+    src: '{{ cidr.docker }}'

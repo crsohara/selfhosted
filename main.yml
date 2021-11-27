@@ -1,6 +1,8 @@
+---
 # - hosts: all
 
 - hosts: pi4
+  gather_facts: no
   vars_files: variables/all.yml
   roles:
     # - smtp
@@ -8,10 +10,11 @@
     # - ovpn_qbit
     # - wireguard
     # - audioserve
-    # - metube
+    - metube
     # - mqtt_telegraf
     # - recipe
-    - flame
+    # - flame
+    # - ufw
 
 # - hosts: pi3
 #   vars_files: variables/all.yml
