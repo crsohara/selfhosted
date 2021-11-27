@@ -34,6 +34,8 @@
           ports:
             - "{{ mqtt.port }}:1883"
           restart: unless-stopped
+          environment:
+            - TZ={{ tz }}
           volumes:
             - '{{ dir.docker }}/mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf'
 
@@ -44,5 +46,7 @@
             - 8092:8092
             - 8094:8094
           restart: unless-stopped
+          environment:
+            - TZ={{ tz }}
           volumes:
             - '{{ dir.docker }}/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf'

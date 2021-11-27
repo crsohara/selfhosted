@@ -21,8 +21,9 @@
             - '{{ dir.storage }}/music:/music'
             - '{{ dir.storage }}/audiobooks:/audiobooks'
           environment:
-            PORT: 3000
-            AUDIOSERVE_SHARED_SECRET: '{{ audioserve.secret }}'
+            - PORT=3000
+            - AUDIOSERVE_SHARED_SECRET={{ audioserve.secret }}
+            - TZ={{ tz }}
           restart: unless-stopped
           networks:
             - traefik

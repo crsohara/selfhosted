@@ -17,5 +17,6 @@
         - TRILIUM_START_NOTE_ID=root
         - PUID=1000
         - PGID=1000
+        - TZ={{ tz }}
       volumes:
         - ./trilium_data:/home/node/trilium-data

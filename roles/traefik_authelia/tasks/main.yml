@@ -68,10 +68,12 @@
             - traefik.enable=true
             - traefik.http.routers.traefik.rule=Host(`dashboard.{{ tld.home }}`)
             - traefik.http.routers.traefik.service=api@internal
-            - traefik.http.routers.traefik.middlewares=authelia@docker
             - traefik.http.routers.traefik.tls.certresolver=tmp
-            - traefik.http.services.api.loadbalancer.server.port=9999
+            - traefik.http.routers.traefik.middlewares=authelia@docker
             - traefik.http.routers.api.middlewares=authelia@docker
+            - traefik.http.services.api.loadbalancer.server.port=9999
+          environment:
+            - TZ={{ tz }}
           ports:
             - 80:80
             - 443:443

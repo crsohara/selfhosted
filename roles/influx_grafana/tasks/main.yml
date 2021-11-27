@@ -18,6 +18,7 @@
             - GF_SECURITY_ALLOW_EMBEDDING=true
             - GF_ANALYTICS_REPORTING_ENABLED=false
             - GF_ANALYTICS_CHECK_FOR_UPDATES=false
+            - TZ={{ tz }}
 
           ports:
             - '3000:3000'
@@ -36,6 +37,7 @@
             - INFLUXDB_USER={{ influx.user.user }}
             - INFLUXDB_USER_PASSWORD={{ influx.user.pass }}
             - INFLUXDB_MONITOR_STORE_ENABLED=FALSE
+            - TZ={{ tz }}
           ports:
             - '8086:8086'
           restart: unless-stopped

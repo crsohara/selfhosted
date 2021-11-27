@@ -17,6 +17,7 @@
           environment:
             - GUID=1000
             - PGID=1000
+            - TZ={{ tz }}
           command:
             - 'pm2-runtime'
             - 'pm2.config.js'

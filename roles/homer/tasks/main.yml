@@ -22,4 +22,5 @@
           environment:
             - UID=1000
             - GID=1000
+            - TZ={{ tz }}
           restart: unless-stopped

@@ -79,7 +79,7 @@
             - PGID=1000
             - PUID=1000
             - DOCKER_MODS=arafatamim/linuxserver-io-mod-vuetorrent
-            - TX={{ tz }}
+            - TZ={{ tz }}
           depends_on:
             - vpn
           restart: unless-stopped

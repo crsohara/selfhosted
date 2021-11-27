@@ -19,9 +19,10 @@
           container_name: nansi_metube
           restart: unless-stopped
           environment:
-          - PUID=1000
-          - GUID=1000
-          - AUDIO_DOWNLOAD_DIR=/downloads/audio
+            - PUID=1000
+            - GUID=1000
+            - AUDIO_DOWNLOAD_DIR=/downloads/audio
+            - TZ={{ tz }}
           networks:
             - traefik
           volumes:
