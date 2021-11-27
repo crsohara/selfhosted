@@ -12,4 +12,5 @@ http:
   services:
     trilium:
       loadbalancer:
-        url: http://{{ host.pi3.ip }}:22222
+        servers:
+          - url: http://{{ host.pi3.ip }}:22222

@@ -35,9 +35,13 @@
         traefik:
           external:
             name: traefik
+        authelia:
+          internal: true
 
       volumes:
         certificate:
+          driver: local
+        authelia-datastore:
           driver: local
 
       services:
@@ -88,16 +92,33 @@
           depends_on:
             - authelia
 
+        authelia-datastore:
+          image: postgres:13-alpine
+          container_name: nansi_authlia-datastore
+          restart: always
+          environment:
+            - POSTGRES_DB={{ postgres.authelia.db }}
+            - POSTGRES_USER={{ postgres.authelia.user }}
+            - POSTGRES_PASSWORD={{ postgres.authelia.password }}
+            - TIMEZONE={{ tz }}
+          networks:
+            - authelia
+          volumes:
+            - authelia-datastore:/var/lib/postgresql/data
+
         authelia:
           image: authelia/authelia:latest
           container_name: nansi_authelia
           restart: always
           networks:
             - traefik
+            - authelia
           environment:
             - TZ={{ tz }}
             - PGID=1000
             - PUID=1000
+          depends_on:
+            - authelia-datastore
           volumes:
             - "{{ dir.docker }}/authelia:/config"
           labels:

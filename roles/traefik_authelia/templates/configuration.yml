@@ -69,11 +69,23 @@ regulation:
   ban_time: 1h
 
 storage:
-  local:
-    path: /config/db.sqlite3
+  # encryption_key: {{ postgres.authelia.secret }} # breaks container
+  postgres:
+    host: authelia-datastore
+    database: {{ postgres.authelia.db }}
+    username: {{ postgres.authelia.user }}
+    password: {{ postgres.authelia.password }}
+    sslmode: disable
 
 notifier:
-  filesystem:
-    filename: /config/notification.txt
+  # filesystem:
+  #   filename: /config/notification.txt
+  smtp:
+    username: {{ authelia.smtp.user }}
+    # Password can also be set using a secret: https://www.authelia.com/docs/configuration/secrets.html
+    password: {{ authelia.smtp.password }}
+    sender: admin@{{ tld.base }}
+    host: smtp.gmail.com
+    port: 587
 
 theme: grey
