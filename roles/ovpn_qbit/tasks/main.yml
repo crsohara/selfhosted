@@ -5,6 +5,11 @@
     path: "{{ dir.docker }}/ovpn"
     state: directory
 
+- name: Ensure wg_internal dir exists | file
+  file:
+    path: "{{ dir.docker }}/wg_internal"
+    state: directory
+
 - name: Ensure qbit dir exists | file
   file:
     path: "{{ dir.docker }}/qbittorrent"
@@ -15,6 +20,12 @@
     src: vpn.auth
     dest: "{{ dir.docker }}/ovpn/"
   notify: reboot ovpn
+
+- name: wg_internal conf | template
+  template:
+    src: wg0.conf
+    dest: "{{ dir.docker }}/wg_internal/"
+  notify: reboot wg_internal
 
 - name: qBit config | template
   template:
@@ -28,7 +39,7 @@
     dest: "{{ dir.docker }}/qbittorrent/"
   notify: reboot qbit
 
-- name: OpenVpn qBittorrent
+- name: Vpn qBittorrent
 
   docker_compose:
     project_name: nansi_openvpn_qbit
@@ -42,26 +53,53 @@
           driver: local
 
       services:
-        vpn:
-          image: derkades/ovpn-client:latest
-          container_name: nansi_vpn
-          volumes:
-            - "{{ dir.docker }}/openvpn/node-ch-05.protonvpn.net.udp.ovpn:/client.ovpn"
-            - "{{ dir.docker }}/openvpn/vpn.auth:/vpn.auth"
+        # vpn:
+        #   image: derkades/ovpn-client:latest
+        #   container_name: nansi_vpn
+        #   volumes:
+        #     - "{{ dir.docker }}/openvpn/node-ch-05.protonvpn.net.udp.ovpn:/client.ovpn"
+        #     - "{{ dir.docker }}/openvpn/vpn.auth:/vpn.auth"
+        #   cap_add:
+        #     - NET_ADMIN
+        #     - SYS_MODULE
+        #   sysctls:
+        #     - net.ipv4.conf.all.src_valid_mark=1
+        #   restart:
+        #     - unless-stopped
+        #   ports:
+        #     - 8080:8080 # for lan access
+        #   devices:
+        #     - /dev/net/tun:/dev/net/tun
+        #   environment:
+        #     - LOCAL_NETWORK={{ cidr.lan }}
+        #     - TX={{ tz }}
+        #   labels:
+        #     - traefik.enable=true
+        #     - traefik.http.routers.qbit.tls.certresolver=tmp
+        #     - 'traefik.http.routers.qbit.rule=Host(`qbit.{{ tld.home }}`) && !Path(`/service-worker.js`)'
+        #     - traefik.http.routers.qbit.middlewares=authelia@docker
+        #     - traefik.http.routers.qbit.service=qbit
+        #     - traefik.http.services.qbit.loadbalancer.server.port=8080
+        #   networks:
+        #     - traefik
+
+        wg_internal:
+          image: linuxserver/wireguard:latest
+          container_name: nansi_wg_internal
+          environment:
+            - PGID=1000
+            - PUID=1000
+            - TZ={{ tz }}
+          sysctls:
+            - net.ipv4.conf.all.src_valid_mark=1
           cap_add:
             - NET_ADMIN
             - SYS_MODULE
-          sysctls:
-            - net.ipv4.conf.all.src_valid_mark=1
-          restart:
-            - unless-stopped
+          restart: unless-stopped
+          volumes:
+            - "{{ dir.docker }}/wg_internal:/config"
           ports:
             - 8080:8080 # for lan access
-          devices:
-            - /dev/net/tun:/dev/net/tun
-          environment:
-            - LOCAL_NETWORK={{ cidr.lan }}
-            - TX={{ tz }}
           labels:
             - traefik.enable=true
             - traefik.http.routers.qbit.tls.certresolver=tmp
@@ -80,10 +118,13 @@
             - PUID=1000
             - DOCKER_MODS=arafatamim/linuxserver-io-mod-vuetorrent
             - TZ={{ tz }}
-          depends_on:
-            - vpn
           restart: unless-stopped
-          network_mode: service:vpn
+          # network_mode: service:vpn
+          # depends_on:
+          #   - vpn
+          network_mode: service:wg_internal
+          depends_on:
+            - wg_internal
           volumes:
             - "{{ dir.storage }}/downloads:/downloads"
             - "{{ dir.storage }}:/storage"

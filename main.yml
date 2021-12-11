@@ -6,8 +6,8 @@
   vars_files: variables/all.yml
   roles:
     # - smtp
-    - traefik_authelia
-    # - ovpn_qbit
+    # - traefik_authelia
+    - ovpn_qbit
     # - wireguard
     # - audioserve
     # - metube
