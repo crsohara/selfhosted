@@ -106,6 +106,19 @@
           volumes:
             - authelia-datastore:/var/lib/postgresql/data
 
+        redis:
+          image: redis:alpine
+          container_name: redis
+          volumes:
+            - "{{ dir.docker }}/redis:/data"
+          networks:
+            - authelia
+          expose:
+            - "{{ authelia.redis.port }}"
+          restart: unless-stopped
+          environment:
+            - TZ={{ tz }}
+
         authelia:
           image: authelia/authelia:latest
           container_name: nansi_authelia

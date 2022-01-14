@@ -63,6 +63,12 @@ session:
   remember_me_duration: 1M
   domain: {{ tld.home }}
 
+  redis:
+    host: redis
+    port: {{ authelia.redis.port }}
+    # This secret can also be set using the env variables AUTHELIA_SESSION_REDIS_PASSWORD_FILE
+    # password: authelia
+
 regulation:
   max_retries: 3
   find_time: 1h # can't be larger than ban_time
