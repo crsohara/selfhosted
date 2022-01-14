@@ -25,7 +25,9 @@
   template:
     src: wg0.conf
     dest: "{{ dir.docker }}/wg_internal/"
-  notify: reboot wg_internal
+  notify:
+    - reboot wg_internal
+    - reboot qbit
 
 - name: qBit config | template
   template:
