@@ -44,6 +44,7 @@
             - POSTGRES_DB={{ postgres.recipe.db }}
             - POSTGRES_USER={{ postgres.recipe.user }}
             - POSTGRES_PASSWORD={{ postgres.recipe.password }}
+            - REVERSE_PROXY_AUTH=1
             - TIMEZONE={{ tz }}
             - SECRET_KEY={{ recipe.secret }}
 

@@ -3,7 +3,7 @@
 
 ## Installation
 ```
-pip install ansible
+pip install ansible ansible-galaxy
 ansible-galaxy install -r requirements.yml
 ```
 
