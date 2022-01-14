@@ -7,7 +7,8 @@
   roles:
     # - smtp
     # - traefik_authelia
-    - ovpn_qbit
+    # - diun
+    # - ovpn_qbit
     # - wireguard
     # - audioserve
     # - metube
