@@ -64,7 +64,7 @@ session:
   domain: {{ tld.home }}
 
   redis:
-    host: redis
+    host: nansi_authelia-redis
     port: {{ authelia.redis.port }}
     # This secret can also be set using the env variables AUTHELIA_SESSION_REDIS_PASSWORD_FILE
     # password: authelia
@@ -75,7 +75,7 @@ regulation:
   ban_time: 1h
 
 storage:
-  # encryption_key: {{ postgres.authelia.secret }} # breaks container
+  encryption_key: {{ postgres.authelia.secret }} # breaks container
   postgres:
     host: authelia-datastore
     database: {{ postgres.authelia.db }}
