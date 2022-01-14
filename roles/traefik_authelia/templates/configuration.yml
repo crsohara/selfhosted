@@ -66,8 +66,7 @@ session:
   redis:
     host: nansi_authelia-redis
     port: {{ authelia.redis.port }}
-    # This secret can also be set using the env variables AUTHELIA_SESSION_REDIS_PASSWORD_FILE
-    # password: authelia
+    password: {{ authelia.redis.password }}
 
 regulation:
   max_retries: 3

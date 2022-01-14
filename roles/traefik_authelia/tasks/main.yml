@@ -116,6 +116,7 @@
           expose:
             - "{{ authelia.redis.port }}"
           restart: unless-stopped
+          command: redis-server --requirepass {{ authelia.redis.password }}
           environment:
             - TZ={{ tz }}
 

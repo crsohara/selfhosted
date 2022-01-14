@@ -7,7 +7,6 @@
   roles:
     # - smtp
     # - traefik_authelia
-    # - diun
     # - ovpn_qbit
     # - wireguard
     # - audioserve
@@ -16,6 +15,7 @@
     # - recipe
     # - flame
     # - ufw
+    # - diun
 
 # - hosts: pi3
 #   vars_files: variables/all.yml
