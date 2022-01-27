@@ -53,6 +53,7 @@
             - '--log.level=ERROR'
             - '--api=true'
             - '--api.insecure=true'
+            - '--global.sendAnonymousUsage=false'
             - '--pilot.token={{ traefik.pilot.token }}'
             - '--providers.docker=true'
             - '--providers.docker.network=traefik'
