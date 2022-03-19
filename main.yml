@@ -16,6 +16,8 @@
     # - flame
     # - ufw
     # - diun
+    # - changedetection
+    # - audiobookshelf
 
 # - hosts: pi3
 #   vars_files: variables/all.yml

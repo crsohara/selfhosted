@@ -1,0 +1,33 @@
+- name: Create changedetection.io container
+  docker_compose:
+    project_name: nansi_changedetection
+    pull: yes
+
+    definition:
+      version: '3.3'
+      services:
+        changedetection:
+          image: ghcr.io/dgtlmoon/changedetection.io:latest
+          container_name: changedetection
+          hostname: changedetection
+          volumes:
+            - changedetection-data:/datastore
+          restart: unless-stopped
+          labels:
+            - traefik.enable=true
+            - traefik.http.routers.detect.tls.certresolver=tmp
+            - 'traefik.http.routers.detect.rule=Host(`detect.{{ tld.home }}`) && !Path(`/service-worker.js`)'
+            - traefik.http.routers.detect.middlewares=authelia@docker
+            - traefik.http.routers.detect.service=detect
+            - traefik.http.services.detect.loadbalancer.server.port=5000
+          networks:
+            - traefik
+
+      networks:
+        traefik:
+          external:
+            name: traefik
+
+      volumes:
+        changedetection-data:
+          driver: local
