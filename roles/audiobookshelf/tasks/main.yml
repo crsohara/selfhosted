@@ -21,6 +21,8 @@
             - '{{ dir.storage }}/audiobooks:/audiobooks'
             - audiobookshelf-metadata:/metadata
             - audiobookshelf-config:/config
+          ports:
+            - 23234:80
           networks:
             - traefik
           labels:
