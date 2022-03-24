@@ -16,7 +16,7 @@
           labels:
             - traefik.enable=true
             - traefik.http.routers.detect.tls.certresolver=tmp
-            - 'traefik.http.routers.detect.rule=Host(`detect.{{ tld.home }}`) && !Path(`/service-worker.js`)'
+            - 'traefik.http.routers.detect.rule=Host(`detect.{{ tld.home }}`)'
             - traefik.http.routers.detect.middlewares=authelia@docker
             - traefik.http.routers.detect.service=detect
             - traefik.http.services.detect.loadbalancer.server.port=5000
