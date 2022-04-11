@@ -8,7 +8,7 @@
     # - smtp
     # - traefik_authelia
     # - ovpn_qbit
-    # - wireguard
+    - wireguard
     # - audioserve
     # - metube
     # - mqtt_telegraf
