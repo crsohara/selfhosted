@@ -19,6 +19,7 @@
           container_name: nansi_audiobookshelf
           volumes:
             - '{{ dir.storage }}/audiobooks:/audiobooks'
+            - '{{ dir.storage }}/podcasts:/podcasts'
             - audiobookshelf-metadata:/metadata
             - audiobookshelf-config:/config
           ports:
