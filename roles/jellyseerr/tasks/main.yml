@@ -1,0 +1,28 @@
+---
+
+- name: Jellyseerr
+
+  docker_compose:
+    project_name: jellyseerr
+    pull: yes
+
+    definition:
+      version: '3.4'
+
+      volumes:
+        jellyseer:
+
+      services:
+        jellyseerr:
+          image: fallenbagel/jellyseerr:1.1.0
+          container_name: jellyseerr
+          #network_mode: host
+          ports:
+                - 5055:5055
+          environment:
+                - LOG_LEVEL=debug
+                - TZ=Europe/Helsinki
+          volumes:
+                - jellyseer:/app/config
+                #- /home/jellyseerr/config:/app/config
+          restart: unless-stopped
