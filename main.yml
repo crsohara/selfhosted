@@ -18,6 +18,7 @@
     # - diun
     # - changedetection
     # - audiobookshelf
+    # - jellyseerr
 
 # - hosts: pi3
 #   vars_files: variables/all.yml
