@@ -12,17 +12,30 @@
       volumes:
         jellyseer:
 
+      networks:
+        traefik:
+          external:
+            name: traefik
+
       services:
         jellyseerr:
           image: fallenbagel/jellyseerr:1.1.0
           container_name: jellyseerr
-          #network_mode: host
-          ports:
-                - 5055:5055
+          # ports:
+            # - 5055:5055
           environment:
-                - LOG_LEVEL=debug
-                - TZ=Europe/Helsinki
+            - LOG_LEVEL=debug
+            - TZ=Europe/Helsinki
+          labels:
+            traefik.enable: true
+            traefik.http.routers.jellyseerr.middlewares: authelia@docker
+            traefik.http.routers.jellyseerr.rule: Host(`jellyseerr.{{ tld.home }}`)
+            traefik.http.routers.jellyseerr.service: jellyseerr
+            traefik.http.routers.jellyseerr.tls.certresolver: tmp
+            traefik.http.services.jellyseerr.loadbalancer.server.port: 5055
           volumes:
-                - jellyseer:/app/config
-                #- /home/jellyseerr/config:/app/config
+            - jellyseer:/app/config
+            #- /home/jellyseerr/config:/app/config
           restart: unless-stopped
+          networks:
+            - traefik
