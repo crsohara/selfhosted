@@ -52,7 +52,7 @@ session:
   secret: {{ authelia.session_secret }}
   expiration: 1h
   inactivity: 5m
-  remember_me_duration: 1M
+  remember_me_duration: 1y
   domain: {{ tld.base }}
 
   redis:
