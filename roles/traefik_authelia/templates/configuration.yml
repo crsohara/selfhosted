@@ -42,6 +42,12 @@ access_control:
       - ["group:user"]
 
     - domain:
+      - "share.{{ tld.base }}"
+      policy: two_factor
+      subject:
+      - ["group:share"]
+
+    - domain:
       - "*.{{ tld.home }}"
       - "*.{{ tld.base }}"
       - "{{ tld.home }}"
