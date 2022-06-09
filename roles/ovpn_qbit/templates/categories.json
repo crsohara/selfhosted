@@ -1,0 +1,14 @@
+{
+  "Audiobooks": {
+      "save_path": "/storage/audiobooks"
+  },
+  "Games": {
+      "save_path": "/storage/games"
+  },
+  "Movies": {
+      "save_path": "/storage/movies"
+  },
+  "TV": {
+      "save_path": "/storage/tv"
+  }
+}

@@ -35,6 +35,12 @@
     dest: "{{ dir.docker }}/qbittorrent/"
   notify: reboot qbit
 
+- name: qBit categories.json | template
+  template:
+    src: categories.json
+    dest: "{{ dir.docker }}/qbittorrent/"
+  notify: reboot qbit
+
 - name: qBit slack script | file
   copy:
     src: slack-on-complete.sh
@@ -55,36 +61,6 @@
           driver: local
 
       services:
-        # vpn:
-        #   image: derkades/ovpn-client:latest
-        #   container_name: nansi_vpn
-        #   volumes:
-        #     - "{{ dir.docker }}/openvpn/node-ch-05.protonvpn.net.udp.ovpn:/client.ovpn"
-        #     - "{{ dir.docker }}/openvpn/vpn.auth:/vpn.auth"
-        #   cap_add:
-        #     - NET_ADMIN
-        #     - SYS_MODULE
-        #   sysctls:
-        #     - net.ipv4.conf.all.src_valid_mark=1
-        #   restart:
-        #     - unless-stopped
-        #   ports:
-        #     - 8080:8080 # for lan access
-        #   devices:
-        #     - /dev/net/tun:/dev/net/tun
-        #   environment:
-        #     - LOCAL_NETWORK={{ cidr.lan }}
-        #     - TX={{ tz }}
-        #   labels:
-        #     - traefik.enable=true
-        #     - traefik.http.routers.qbit.tls.certresolver=tmp
-        #     - 'traefik.http.routers.qbit.rule=Host(`qbit.{{ tld.home }}`) && !Path(`/service-worker.js`)'
-        #     - traefik.http.routers.qbit.middlewares=authelia@docker
-        #     - traefik.http.routers.qbit.service=qbit
-        #     - traefik.http.services.qbit.loadbalancer.server.port=8080
-        #   networks:
-        #     - traefik
-
         wg_internal:
           image: linuxserver/wireguard:latest
           container_name: nansi_wg_internal
@@ -121,9 +97,6 @@
             - DOCKER_MODS=arafatamim/linuxserver-io-mod-vuetorrent
             - TZ={{ tz }}
           restart: unless-stopped
-          # network_mode: service:vpn
-          # depends_on:
-          #   - vpn
           network_mode: service:wg_internal
           depends_on:
             - wg_internal
@@ -131,6 +104,7 @@
             - "{{ dir.storage }}/downloads:/downloads"
             - "{{ dir.storage }}:/storage"
             - "{{ dir.docker }}/qbittorrent/qBittorrent.conf:/config/qBittorrent/qBittorrent.conf"
+            - "{{ dir.docker }}/qbittorrent/categories.json:/config/qBittorrent/categories.json"
             - "{{ dir.docker }}/qbittorrent/slack-on-complete.sh:/slack-on-complete.sh"
             - qbit_config:/config
 
